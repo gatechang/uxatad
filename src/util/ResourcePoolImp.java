@@ -1,9 +1,17 @@
 package util;
 
+import exception.ResourceDoesNotExistException;
+
 import java.util.concurrent.TimeUnit;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * @author: zhang
+ */
+
+/**
+ * The basic assumption is that the resource is immutable
  */
 public class ResourcePoolImp<R> implements ResourcePool<R> {
 
@@ -11,12 +19,19 @@ public class ResourcePoolImp<R> implements ResourcePool<R> {
 
     private boolean isOpen = false;
 
-    private int size = 0;
+    private int head = 0;
 
-    private Object lock = new Object();
+    private int tail = 0;
+
+    Object[] recources;
+
+    Map<R, Integer> indices;
 
 
-    Object[] recources = new Object[DEFAULT_POOL_SIZE];
+    public ResourcePoolImp() {
+        this.recources = new Object[DEFAULT_POOL_SIZE];
+        this.indices = new HashMap<R, Integer>();
+    }
 
     public void open(){
         isOpen = true;
@@ -27,11 +42,11 @@ public class ResourcePoolImp<R> implements ResourcePool<R> {
     }
 
     public void close() {
-
+//        isOpen = false;
     }
 
     public void closeNow() {
-
+        isOpen = false;
     }
 
     public boolean add(R resource) {
@@ -39,10 +54,18 @@ public class ResourcePoolImp<R> implements ResourcePool<R> {
     }
 
     public boolean remove(R resource) {
-        return false;
+        if(!indices.containsKey(resource)) {
+            return false;
+        }
+
+        return removeNow(resource);
     }
 
     public boolean removeNow(R resource) {
+        if (!indices.containsKey(resource)) {
+            return false;
+        }
+
         return false;
     }
 
