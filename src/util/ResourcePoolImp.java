@@ -3,6 +3,7 @@ package util;
 import exception.ResourceDoesNotExistException;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -23,14 +24,16 @@ public class ResourcePoolImp<R> implements ResourcePool<R> {
 
     private int tail = 0;
 
-    Object[] recources;
+    private Object[] recources;
 
-    Map<R, Integer> indices;
+    private Map<R, Integer> indices;
 
+    private Map<R, Lock> locks;
 
     public ResourcePoolImp() {
         this.recources = new Object[DEFAULT_POOL_SIZE];
         this.indices = new HashMap<R, Integer>();
+        this.locks = new HashMap<R, Lock>();
     }
 
     public void open(){
